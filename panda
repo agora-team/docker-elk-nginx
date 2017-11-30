@@ -1,0 +1,50 @@
+#!/usr/bin/env bash
+_VERSION='0.1.1'
+_ME=$(basename "${0}")
+BANNER=$(cat <<HEREDOC
+
+Docker ELK Setup
+
+Version: ${_VERSION}
+
+Usage:
+  ${_ME} <command> [--command-options] [<arguments>]
+  ${_ME} -h | --help
+  ${_ME} --version
+
+Options:
+  -h --help  Display this help information.
+  --version  Display version information.
+
+Help:
+  ${_ME} help [<command>]
+
+HEREDOC
+)
+
+source ./tools/pandalib.sh
+
+VIENNA_RELEASE='https://github.com/ViennaRNA/ViennaRNA/releases/download/v2.3.5/ViennaRNA-2.3.5.tar.gz'
+VIENNA_PREFIX=`pwd`/.build
+
+__sigint () {
+  printf '\n'
+  _abort 'Cancelled'
+}
+trap __sigint SIGINT
+
+
+#================================================
+desc 'dev:gen_htpasswd' <<HEREDOC
+Usage:
+  ${_ME} dev:gen_htpasswd
+
+Description:
+  Generates htpasswd for nginx.
+HEREDOC
+dev:gen_htpasswd () {
+  printf "${SETUP_USERNAME}:$(openssl passwd -crypt ${SETUP_PASSWORD})\n" >> ./etc/.htpasswd
+}
+
+#================================================
+_main

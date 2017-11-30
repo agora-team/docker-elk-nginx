@@ -46,5 +46,36 @@ dev:gen_htpasswd () {
   printf "${SETUP_USERNAME}:$(openssl passwd -crypt ${SETUP_PASSWORD})\n" >> ./etc/.htpasswd
 }
 
+desc 'dev:dehydrate' <<HEREDOC
+Usage:
+  ${_ME} dev:dehydrate
+
+Description:
+  Get the letsencrypt certificates.
+HEREDOC
+dev:dehydrate () {
+  cd etc
+  if [ ! -d 'dehydrated' ]; then
+    git clone https://github.com/lukas2511/dehydrated
+    cd dehydrated
+    mkdir hooks
+    git clone https://github.com/kappataumu/letsencrypt-cloudflare-hook hooks/cloudflare
+    pip install -r hooks/cloudflare/requirements.txt
+  else
+    cd dehydrated
+  fi
+
+  echo "export CF_EMAIL=${CF_EMAIL}" > config
+  echo "export CF_KEY=${CF_KEY}" >> config
+  echo "export CF_DNS_SERVERS='8.8.8.8 8.8.4.4'" >> config
+  echo "CONTACT_EMAIL=${SETUP_CONTACT_EMAIL}" >> config
+  echo "HOOK='hooks/cloudflare/hook.py'" >> config
+  echo "CHALLENGETYPE=dns-01" >> config
+
+  ./dehydrated --register --accept-terms
+  ./dehydrated -c -d ${SERVER_DOMAIN}
+  cp ./certs/$SERVER_DOMAIN/fullchain.pem ../
+  cp ./certs/$SERVER_DOMAIN/privkey.pem ../
+}
 #================================================
 _main

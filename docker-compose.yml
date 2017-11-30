@@ -21,6 +21,8 @@ services:
       - './etc/nginx.conf:/etc/nginx/nginx.conf:ro'
       - './dalek:/usr/share/nginx/html:ro'
       - './etc/.htpasswd:/etc/nginx/.htpasswd:ro'
+      - './etc/fullchain.pem:/etc/nginx/ssl/fullchain.pem:ro'
+      - './etc/privkey.pem:/etc/nginx/ssl/privkey.pem:ro'
     links:
       - elasticsearch
       - kibana

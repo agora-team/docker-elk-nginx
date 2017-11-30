@@ -4,6 +4,18 @@ services:
     image: docker.elastic.co/elasticsearch/elasticsearch:5.6.4
     networks:
       - elk
+    environment:
+      - bootstrap.memory_lock=true
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+      - "discovery.zen.ping.unicast.hosts=elasticsearch"
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+      nofile:
+        soft: 65536
+        hard: 65536
+    mem_limit: 1g
     volumes:
       - 'esdata:/usr/share/elasticsearch/data'
       - './etc/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml:ro'

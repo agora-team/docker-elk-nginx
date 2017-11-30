@@ -20,6 +20,7 @@ services:
     volumes:
       - './etc/nginx.conf:/etc/nginx/nginx.conf:ro'
       - './dalek:/usr/share/nginx/html:ro'
+      - './etc/.htpasswd:/etc/nginx/.htpasswd:ro'
     links:
       - elasticsearch
       - kibana

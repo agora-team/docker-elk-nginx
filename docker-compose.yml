@@ -30,8 +30,10 @@ services:
       - elasticsearch
       - kibana
     ports:
-      - '8080:80'
-      - '8081:443'
+      - '80:80'
+      - '443:443'
+    environment:
+      - SERVER_DOMAIN
     networks:
       - elk
 volumes:
